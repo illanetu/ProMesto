@@ -1,7 +1,7 @@
 // Скрипт для автоматического создания таблицы при деплое на Vercel
 // Можно использовать в Build Command на Vercel, но лучше создать таблицу вручную через Neon Dashboard
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../generated/prisma'
 
 const prisma = new PrismaClient()
 

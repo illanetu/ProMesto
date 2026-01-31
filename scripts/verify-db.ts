@@ -2,7 +2,7 @@
  * Скрипт проверки: создаёт тестового пользователя, тестовую запись о месте (Mesto) и голос.
  * Запуск: npx tsx scripts/verify-db.ts
  */
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../generated/prisma'
 
 const prisma = new PrismaClient()
 
