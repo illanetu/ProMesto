@@ -2,39 +2,30 @@
 
 ## Шаг 1: Подготовка базы данных на Neon
 
-### 1.1. Создание таблицы через Neon Dashboard
+### 1.1. Применение миграций (создание таблиц)
 
-1. **Откройте Neon Dashboard**
-   - Перейдите на [console.neon.tech](https://console.neon.tech)
-   - Войдите в свой аккаунт
+На Neon не используйте `prisma migrate dev` — применяйте миграции так:
 
-2. **Найдите SQL Editor**
-   - Выберите ваш проект из списка проектов
-   - В левом боковом меню найдите пункт **"SQL Editor"**
-   - Или используйте вкладку "SQL Editor" в верхней панели
+```powershell
+npx prisma migrate deploy
+```
 
-3. **Выполните SQL запрос**
-   - В редакторе SQL вы увидите пример запроса (можно его удалить)
-   - Очистите редактор (Ctrl+A → Delete) или нажмите "New Query"
-   - Скопируйте следующий SQL код из файла `prisma/migrations/init.sql`:
-   
-   ```sql
-   CREATE TABLE IF NOT EXISTS "notes" (
-       "id" TEXT NOT NULL,
-       "title" TEXT NOT NULL,
-       "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-       CONSTRAINT "notes_pkey" PRIMARY KEY ("id")
-   );
-   ```
-   
-   - Вставьте код в SQL Editor
-   - Нажмите кнопку **"Run"** (или используйте горячие клавиши `Ctrl+Enter` / `Cmd+Enter`)
+Это создаст все таблицы: users, notes, mestos, votes, categories, tags и др. Перед этим в корне проекта должен быть настроен `.env` с `DATABASE_URL` (строка подключения из Neon).
 
-4. **Проверка**
-   - Должно появиться сообщение об успешном выполнении
-   - Таблица `notes` создана в базе данных
+### 1.2. Prisma Migrate и Neon (ошибка P3014)
 
-### 1.2. Получение строки подключения
+На Neon у пользователя БД нет прав создавать новую базу (shadow database), поэтому **`prisma migrate dev`** выдаёт ошибку P3014.
+
+**Решение:** применять миграции командой **`prisma migrate deploy`** (shadow-база не используется):
+
+```powershell
+npx prisma migrate deploy
+```
+
+- Для **первого применения** миграций и обновления схемы используйте `migrate deploy`.
+- Для **разработки** новых миграций: либо создайте вторую БД (ветку) в Neon и задайте в `.env` переменную `SHADOW_DATABASE_URL` с её URL, либо правите схему и снова запускаете `migrate deploy` после ручного создания файла миграции.
+
+### 1.3. Получение строки подключения
 
 1. В Neon Dashboard откройте ваш проект
 2. Перейдите в раздел **"Connection Details"** или **"Connect"**
@@ -108,11 +99,10 @@ vercel
 ### Ошибка подключения к БД на Vercel
 - Проверьте, что переменная `DATABASE_URL` добавлена в настройках Vercel
 - Убедитесь, что строка подключения правильная (скопирована из Neon Dashboard)
-- Проверьте, что таблица `notes` создана в базе данных
+- Убедитесь, что миграции применены: `npx prisma migrate deploy`
 
 ### Таблица не существует
-- Выполните SQL из `prisma/migrations/init.sql` в Neon Dashboard → SQL Editor
-- Или используйте локально: `npm run db:create-table` (после `vercel env pull .env.local`)
+- Примените миграции: `npx prisma migrate deploy` (локально с `DATABASE_URL` или после `vercel env pull .env.local`)
 
 ### Нет данных на странице
 - Это нормально, если таблица пустая

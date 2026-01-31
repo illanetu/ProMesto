@@ -10,10 +10,87 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Note {
-  id        String   @id @default(uuid())
-  title     String
+enum Visibility {
+  PRIVATE
+  PUBLIC
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
   createdAt DateTime @default(now()) @map("created_at")
 
+  notes  Note[]
+  mestos Mesto[]
+  votes  Vote[]
+
+  @@map("users")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now()) @map("created_at")
+  ownerId   String   @map("owner_id")
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
   @@map("notes")
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  category String
+
+  mestos Mesto[]
+
+  @@map("categories")
+}
+
+model Mesto {
+  id          String     @id @default(cuid())
+  title       String
+  content     String
+  description String?
+  visibility  Visibility @default(PRIVATE)
+  publishedAt DateTime?  @map("published_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  ownerId     String     @map("owner_id")
+  categoryId  String?    @map("category_id")
+
+  owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags     Tag[]
+  votes    Vote[]
+
+  @@index([ownerId, updatedAt])
+  @@index([visibility, createdAt])
+  @@map("mestos")
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String
+
+  mestos Mesto[]
+
+  @@map("tags")
+}
+
+model Vote {
+  id       String   @id @default(cuid())
+  value    Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  userId   String   @map("user_id")
+  mestoId  String   @map("mesto_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mesto Mesto @relation(fields: [mestoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mestoId])
+  @@index([mestoId])
+  @@index([userId])
+  @@map("votes")
 }

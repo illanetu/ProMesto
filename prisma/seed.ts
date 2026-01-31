@@ -5,25 +5,26 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Начинаем seeding...')
 
-  // Очищаем существующие записи
-  await prisma.note.deleteMany()
+  const user = await prisma.user.upsert({
+    where: { email: 'seed@example.com' },
+    create: {
+      email: 'seed@example.com',
+      name: 'Seed пользователь',
+    },
+    update: {},
+  })
 
-  // Создаем тестовые записи
+  await prisma.note.deleteMany({ where: { ownerId: user.id } })
+
   const notes = await Promise.all([
     prisma.note.create({
-      data: {
-        title: 'Первая заметка',
-      },
+      data: { title: 'Первая заметка', ownerId: user.id },
     }),
     prisma.note.create({
-      data: {
-        title: 'Вторая заметка',
-      },
+      data: { title: 'Вторая заметка', ownerId: user.id },
     }),
     prisma.note.create({
-      data: {
-        title: 'Третья заметка',
-      },
+      data: { title: 'Третья заметка', ownerId: user.id },
     }),
   ])
 
