@@ -13,7 +13,8 @@
     "db:verify": "tsx scripts/verify-db.ts",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "view-db": "next dev"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
