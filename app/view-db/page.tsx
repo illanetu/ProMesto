@@ -7,11 +7,8 @@ import {
   getTableData,
   getTables,
   updateRecord,
-  TABLE_CONFIG,
-  type TableKey,
-  type ViewDbEnv,
 } from './actions'
-import { TABLE_KEYS } from '@/lib/view-db-prisma'
+import { TABLE_CONFIG, TABLE_KEYS, type TableKey, type ViewDbEnv } from '@/lib/view-db-config'
 
 const PAGE_SIZE = 10
 
@@ -135,7 +132,7 @@ export default function ViewDbPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const columns = data.length > 0 ? Object.keys(data[0]) : []
-  const displayTables = tables.length > 0 ? tables : TABLE_KEYS.map((key) => ({ key, label: TABLE_CONFIG[key].label }))
+  const displayTables = tables.length > 0 ? tables : TABLE_KEYS.map((key) => ({ key, label: TABLE_CONFIG[key]?.label ?? key }))
 
   return (
     <main style={styles.main}>

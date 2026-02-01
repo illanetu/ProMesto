@@ -87,5 +87,3 @@ export async function deleteRecord(env: ViewDbEnv, tableKey: TableKey, id: strin
     return { ok: false as const, error: (e as Error).message }
   }
 }
-
-export { TABLE_CONFIG, type TableKey, type ViewDbEnv }
