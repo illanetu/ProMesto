@@ -138,6 +138,9 @@ export default function ViewDbPage() {
   return (
     <main style={styles.main}>
       <h1 style={styles.h1}>view-db</h1>
+      <p style={styles.subtitle}>
+        Тестовая программа: выберите локальную или рабочую БД → список таблиц с кнопкой «Открыть» → таблица с пагинацией и CRUD.
+      </p>
 
       <section style={styles.section}>
         <label style={styles.label}>База данных:</label>
@@ -356,7 +359,8 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1.5rem 2rem',
     boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
   },
-  h1: { fontSize: '1.75rem', marginBottom: '1rem', color: '#333' },
+  h1: { fontSize: '1.75rem', marginBottom: '0.5rem', color: '#333' },
+  subtitle: { fontSize: '0.9rem', color: '#666', marginBottom: '1rem' },
   h2: { fontSize: '1.25rem', marginBottom: '0.75rem', color: '#444', display: 'flex', alignItems: 'center', gap: 12 },
   h3: { fontSize: '1.1rem', marginBottom: '1rem', color: '#333' },
   section: { marginBottom: '1.5rem' },

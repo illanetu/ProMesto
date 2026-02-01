@@ -114,6 +114,10 @@ export default async function Home() {
           <strong>Статус подключения:</strong> {notes.length > 0 ? '✅ Подключено' : '⚠️ Нет данных'}
           <br />
           <strong>Количество заметок:</strong> {notes.length}
+          <br />
+          <a href="/view-db" style={{ color: '#667eea', marginTop: '0.5rem', display: 'inline-block' }}>
+            view-db — просмотр и CRUD таблиц (локальная / рабочая БД)
+          </a>
         </div>
       </div>
     </main>
