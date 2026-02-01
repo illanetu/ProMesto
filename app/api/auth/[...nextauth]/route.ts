@@ -3,9 +3,13 @@
  * В dev при 500 возвращаем текст ошибки для диагностики.
  */
 import { handlers } from "@/auth"
+import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
-async function wrap(handler: (req: Request) => Promise<Response>, req: Request) {
+async function wrap(
+  handler: (req: NextRequest) => Promise<Response>,
+  req: NextRequest
+) {
   try {
     return await handler(req)
   } catch (e) {
@@ -20,10 +24,10 @@ async function wrap(handler: (req: Request) => Promise<Response>, req: Request) 
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   return wrap(handlers.GET, req)
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   return wrap(handlers.POST, req)
 }
