@@ -23,7 +23,7 @@ npm install
 New-Item -Path .env -ItemType File -Force
 ```
 
-Добавьте в `.env` следующее содержимое (замените на вашу строку подключения NeonDB):
+Добавьте в `.env` минимум строку подключения к БД (и переменные аутентификации — см. раздел 3.1):
 
 ```
 DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
@@ -34,6 +34,81 @@ DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
 2. Создайте новый проект
 3. Скопируйте Connection String из настроек проекта
 4. Вставьте в `.env` файл
+
+## 3.1. Настройка аутентификации (Auth.js + Google OAuth)
+
+В проекте используется **Auth.js** (NextAuth v5) с входом через **Google** и сессиями в БД (Prisma). Нужны три переменные: `AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
+
+### AUTH_SECRET
+
+Секрет для подписи cookie и токенов сессии. **Обязателен в production.**
+
+**Как получить:**
+
+1. **Через Node.js (PowerShell):**
+   ```powershell
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   ```
+   Скопируйте вывод и подставьте в `.env`:
+   ```
+   AUTH_SECRET="скопированная-строка"
+   ```
+
+2. **Через OpenSSL** (если установлен):
+   ```powershell
+   openssl rand -base64 32
+   ```
+
+Используйте одну длинную случайную строку без пробелов. Менять её не нужно, пока не будете ротировать секреты.
+
+---
+
+### GOOGLE_CLIENT_ID и GOOGLE_CLIENT_SECRET
+
+Учётные данные OAuth 2.0 приложения в Google. Выдаются в Google Cloud Console.
+
+**Как получить:**
+
+1. Откройте [Google Cloud Console](https://console.cloud.google.com/) и войдите в аккаунт Google.
+
+2. **Создайте или выберите проект:**
+   - Вверху выберите проект или нажмите «Select a project» → «New Project».
+   - Задайте имя (например, «ProMesto») и создайте проект.
+
+3. **Включите Google+ API (или People API) и OAuth consent:**
+   - Меню (☰) → **APIs & Services** → **Enabled APIs & services** → **+ ENABLE APIS AND SERVICES**.
+   - Найдите **Google+ API** или **Google People API** и включите.
+   - Меню → **APIs & Services** → **OAuth consent screen**:
+     - User Type: **External** (для любых пользователей) или **Internal** (только для пользователей вашей организации).
+     - Заполните App name, User support email, Developer contact.
+     - Сохраните.
+
+4. **Создайте OAuth 2.0 Client ID:**
+   - Меню → **APIs & Services** → **Credentials**.
+   - **+ CREATE CREDENTIALS** → **OAuth client ID**.
+   - Application type: **Web application**.
+   - Name: например, «ProMesto Web».
+   - **Authorized JavaScript origins** (для локальной разработки и продакшена):
+     - `http://localhost:3000`
+     - Ваш домен на Vercel, например: `https://ваш-проект.vercel.app`
+   - **Authorized redirect URIs** (обязательно):
+     - `http://localhost:3000/api/auth/callback/google`
+     - `https://ваш-проект.vercel.app/api/auth/callback/google`
+   - Нажмите **Create**.
+
+5. **Скопируйте значения в `.env`:**
+   - В списке Credentials откройте созданный **OAuth 2.0 Client ID**.
+   - **Client ID** → в `.env` как `GOOGLE_CLIENT_ID="...apps.googleusercontent.com"`.
+   - **Client Secret** → в `.env` как `GOOGLE_CLIENT_SECRET="..."`.
+
+**Итог в `.env`:**
+```
+AUTH_SECRET="ваш-сгенерированный-секрет"
+GOOGLE_CLIENT_ID="123456789-xxx.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="GOCSPX-xxxxxxxxxxxxxxxx"
+```
+
+После изменения переменных перезапустите `npm run dev`. Вход доступен на странице `/login`.
 
 ## 4. Настройка Prisma
 
