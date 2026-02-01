@@ -1,5 +1,5 @@
 /**
- * Middleware: защита маршрутов /dashboard и /my-prompts.
+ * Proxy (ранее middleware): защита маршрутов /dashboard и /my-prompts.
  * Неавторизованных пользователей Auth.js редиректит на /login (pages.signIn).
  */
 import { auth } from "@/auth"

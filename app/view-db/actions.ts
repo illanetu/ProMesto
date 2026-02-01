@@ -36,7 +36,7 @@ export async function getTableData(
   try {
     const prisma = getViewDbPrisma(env)
     const config = TABLE_CONFIG[tableKey]
-    const delegate = prisma[config.model] as { findMany: (args: { skip: number; take: number }) => Promise<unknown[]>; count: () => Promise<number> }
+    const delegate = prisma[config.model] as unknown as { findMany: (args: { skip: number; take: number }) => Promise<unknown[]>; count: () => Promise<number> }
     const skip = (page - 1) * PAGE_SIZE
     const [data, total] = await withTimeout(
       Promise.all([
@@ -56,7 +56,7 @@ export async function createRecord(env: ViewDbEnv, tableKey: TableKey, data: Rec
   try {
     const prisma = getViewDbPrisma(env)
     const config = TABLE_CONFIG[tableKey]
-    const delegate = prisma[config.model] as { create: (args: { data: Record<string, unknown> }) => Promise<unknown> }
+    const delegate = prisma[config.model] as unknown as { create: (args: { data: Record<string, unknown> }) => Promise<unknown> }
     await delegate.create({ data })
     return { ok: true as const, error: null }
   } catch (e) {
@@ -68,7 +68,7 @@ export async function updateRecord(env: ViewDbEnv, tableKey: TableKey, id: strin
   try {
     const prisma = getViewDbPrisma(env)
     const config = TABLE_CONFIG[tableKey]
-    const delegate = prisma[config.model] as { update: (args: { where: { id: string }; data: Record<string, unknown> }) => Promise<unknown> }
+    const delegate = prisma[config.model] as unknown as { update: (args: { where: { id: string }; data: Record<string, unknown> }) => Promise<unknown> }
     await delegate.update({ where: { id }, data })
     return { ok: true as const, error: null }
   } catch (e) {
@@ -80,7 +80,7 @@ export async function deleteRecord(env: ViewDbEnv, tableKey: TableKey, id: strin
   try {
     const prisma = getViewDbPrisma(env)
     const config = TABLE_CONFIG[tableKey]
-    const delegate = prisma[config.model] as { delete: (args: { where: { id: string } }) => Promise<unknown> }
+    const delegate = prisma[config.model] as unknown as { delete: (args: { where: { id: string } }) => Promise<unknown> }
     await delegate.delete({ where: { id } })
     return { ok: true as const, error: null }
   } catch (e) {
