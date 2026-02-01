@@ -14,6 +14,7 @@
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "db:migrate-manual": "tsx scripts/run-migration-manually.ts",
     "view-db": "next dev"
   },
   "dependencies": {
@@ -24,8 +25,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.12",
+    "@types/pg": "^8.11.6",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "pg": "^8.12.0",
     "prisma": "^5.19.1",
     "tsx": "^4.16.2",
     "typescript": "^5.5.4"
