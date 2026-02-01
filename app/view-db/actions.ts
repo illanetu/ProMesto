@@ -3,10 +3,24 @@
 import { getViewDbPrisma, TABLE_CONFIG, TABLE_KEYS, type TableKey, type ViewDbEnv } from '@/lib/view-db-prisma'
 
 const PAGE_SIZE = 10
+const CONNECT_TIMEOUT_MS = 15000
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(message)), ms)
+    ),
+  ])
+}
 
 export async function getTables(env: ViewDbEnv) {
   try {
-    await getViewDbPrisma(env).$connect()
+    await withTimeout(
+      getViewDbPrisma(env).$connect(),
+      CONNECT_TIMEOUT_MS,
+      'Превышено время ожидания подключения к БД (15 с). Проверьте DATABASE_URL и доступность сервера.'
+    )
   } catch (e) {
     return { ok: false as const, error: (e as Error).message, tables: [] }
   }
@@ -24,10 +38,14 @@ export async function getTableData(
     const config = TABLE_CONFIG[tableKey]
     const delegate = prisma[config.model] as { findMany: (args: { skip: number; take: number }) => Promise<unknown[]>; count: () => Promise<number> }
     const skip = (page - 1) * PAGE_SIZE
-    const [data, total] = await Promise.all([
-      delegate.findMany({ skip, take: PAGE_SIZE }),
-      delegate.count(),
-    ])
+    const [data, total] = await withTimeout(
+      Promise.all([
+        delegate.findMany({ skip, take: PAGE_SIZE }),
+        delegate.count(),
+      ]),
+      CONNECT_TIMEOUT_MS,
+      'Превышено время ожидания загрузки данных. Проверьте подключение к БД.'
+    )
     return { ok: true as const, data, total, pageSize: PAGE_SIZE, error: null }
   } catch (e) {
     return { ok: false as const, data: [], total: 0, pageSize: PAGE_SIZE, error: (e as Error).message }

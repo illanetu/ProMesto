@@ -11,6 +11,7 @@ import {
   type TableKey,
   type ViewDbEnv,
 } from './actions'
+import { TABLE_KEYS } from '@/lib/view-db-prisma'
 
 const PAGE_SIZE = 10
 
@@ -134,6 +135,7 @@ export default function ViewDbPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const columns = data.length > 0 ? Object.keys(data[0]) : []
+  const displayTables = tables.length > 0 ? tables : TABLE_KEYS.map((key) => ({ key, label: TABLE_CONFIG[key].label }))
 
   return (
     <main style={styles.main}>
@@ -165,7 +167,7 @@ export default function ViewDbPage() {
       <section style={styles.section}>
         <h2 style={styles.h2}>Таблицы</h2>
         <ul style={styles.tableList}>
-          {tables.map(({ key, label }) => (
+          {displayTables.map(({ key, label }) => (
             <li key={key} style={styles.tableItem}>
               <span style={styles.tableName}>{label}</span>
               <button
