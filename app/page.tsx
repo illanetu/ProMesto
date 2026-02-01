@@ -1,3 +1,5 @@
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 
 async function getNotes() {
@@ -15,6 +17,11 @@ async function getNotes() {
 }
 
 export default async function Home() {
+  const session = await auth()
+  if (!session?.user) {
+    redirect('/login')
+  }
+
   const notes = await getNotes()
 
   return (
