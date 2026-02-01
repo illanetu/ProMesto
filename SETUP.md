@@ -75,13 +75,12 @@ DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
    - Вверху выберите проект или нажмите «Select a project» → «New Project».
    - Задайте имя (например, «ProMesto») и создайте проект.
 
-3. **Включите Google+ API (или People API) и OAuth consent:**
-   - Меню (☰) → **APIs & Services** → **Enabled APIs & services** → **+ ENABLE APIS AND SERVICES**.
-   - Найдите **Google+ API** или **Google People API** и включите.
-   - Меню → **APIs & Services** → **OAuth consent screen**:
-     - User Type: **External** (для любых пользователей) или **Internal** (только для пользователей вашей организации).
-     - Заполните App name, User support email, Developer contact.
-     - Сохраните.
+3. **Настройте OAuth consent screen** (экран согласия при входе):
+   - Меню (☰) → **APIs & Services** → **OAuth consent screen**.
+   - User Type: **External** (для любых пользователей) или **Internal** (только ваша организация).
+   - Заполните **App name**, **User support email**, **Developer contact** → **Save and Continue**. Остальные шаги можно пропустить.
+
+   Отдельно включать Google+ API или People API **не нужно** — для входа через Google достаточно OAuth credentials и consent screen.
 
 4. **Создайте OAuth 2.0 Client ID:**
    - Меню → **APIs & Services** → **Credentials**.
