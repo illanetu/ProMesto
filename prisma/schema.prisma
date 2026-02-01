@@ -1,5 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Схема БД по DATABASE.md:
+// User — владелец записей, автор, голосующий
+// Note — заметки
+// Mesto — запись о месте (visibility: PRIVATE|PUBLIC)
+// Category — категория места
+// Tag — метки (многие-ко-многим с Mesto)
+// Vote — голос за публичное Mesto (уникально: один пользователь — один голос на запись)
+// Правила: onDelete Cascade для связей; UNIQUE(userId, mestoId); индексы по DATABASE.md
 
 generator client {
   provider = "prisma-client-js"
@@ -16,6 +22,7 @@ enum Visibility {
   PUBLIC
 }
 
+// User: id (cuid), email unique, name optional, createdAt
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -29,6 +36,7 @@ model User {
   @@map("users")
 }
 
+// Note: id, ownerId -> User, title, createdAt
 model Note {
   id        String   @id @default(cuid())
   title     String
@@ -40,6 +48,7 @@ model Note {
   @@map("notes")
 }
 
+// Category: id, category
 model Category {
   id       String  @id @default(cuid())
   category String
@@ -49,6 +58,8 @@ model Category {
   @@map("categories")
 }
 
+// Mesto: id, ownerId -> User, title, content, description?, categoryId -> Category,
+// visibility (PRIVATE|PUBLIC, default PRIVATE), createdAt, updatedAt, publishedAt?
 model Mesto {
   id          String     @id @default(cuid())
   title       String
@@ -61,7 +72,7 @@ model Mesto {
   ownerId     String     @map("owner_id")
   categoryId  String?    @map("category_id")
 
-  owner    User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags     Tag[]
   votes    Vote[]
@@ -71,8 +82,9 @@ model Mesto {
   @@map("mestos")
 }
 
+// Tag — метки, многие-ко-многим с Mesto
 model Tag {
-  id    String @id @default(cuid())
+  id    String  @id @default(cuid())
   name  String
 
   mestos Mesto[]
@@ -80,12 +92,14 @@ model Tag {
   @@map("tags")
 }
 
+// Vote: id, userId -> User, mestoId -> Mesto, value default 1, createdAt
+// UNIQUE(userId, mestoId); индексы Vote(mestoId), Vote(userId)
 model Vote {
-  id       String   @id @default(cuid())
-  value    Int      @default(1)
+  id        String   @id @default(cuid())
+  value     Int      @default(1)
   createdAt DateTime @default(now()) @map("created_at")
-  userId   String   @map("user_id")
-  mestoId  String   @map("mesto_id")
+  userId    String   @map("user_id")
+  mestoId   String   @map("mesto_id")
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   mesto Mesto @relation(fields: [mestoId], references: [id], onDelete: Cascade)

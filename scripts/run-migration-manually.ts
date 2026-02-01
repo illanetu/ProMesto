@@ -26,9 +26,11 @@ function loadEnv() {
 
 async function main() {
   loadEnv()
-  const url = process.env.DATABASE_URL
+  const useLocal = process.argv.includes('--local')
+  const url = useLocal ? process.env.DATABASE_URL_LOCAL : process.env.DATABASE_URL
+  const label = useLocal ? 'локальная (DATABASE_URL_LOCAL)' : 'рабочая (DATABASE_URL)'
   if (!url) {
-    console.error('DATABASE_URL не задан в .env')
+    console.error(useLocal ? 'DATABASE_URL_LOCAL не задан в .env' : 'DATABASE_URL не задан в .env')
     process.exit(1)
   }
 
@@ -38,7 +40,7 @@ async function main() {
   const client = new Client({ connectionString: url })
   try {
     await client.connect()
-    console.log('Подключение к БД установлено. Выполняю миграцию...')
+    console.log(`Подключение к БД (${label}) установлено. Выполняю миграцию...`)
     await client.query(sql)
     console.log('Миграция применена успешно.')
   } catch (e) {

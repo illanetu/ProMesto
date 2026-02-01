@@ -194,7 +194,10 @@ npm run db:generate    # Генерация Prisma Client
 npx prisma migrate deploy   # Применение миграций (на Neon)
 npm run db:seed         # Заполнение БД тестовыми данными
 npm run db:verify       # Проверка: тестовый пользователь, Mesto, голос
+npm run db:check        # Короткая проверка: пользователь + промт (Mesto) + голос
 npm run db:studio       # Открыть Prisma Studio (GUI для БД)
+npm run db:migrate-manual        # Применить миграцию к рабочей БД (без Prisma lock)
+npm run db:migrate-manual-local  # Применить миграцию к локальной БД (DATABASE_URL_LOCAL)
 npm run view-db         # Запуск dev-сервера для просмотра БД (откройте /view-db)
 ```
 
@@ -210,6 +213,23 @@ npm run view-db         # Запуск dev-сервера для просмот�
 Для разделения локальной и рабочей БД задайте в `.env`:
 - `DATABASE_URL` — рабочая БД
 - `DATABASE_URL_LOCAL` — локальная БД (если не задана, используется `DATABASE_URL`)
+
+## 🐳 Локальная БД
+
+**Вариант A: Docker** (нужен установленный [Docker Desktop](https://www.docker.com/products/docker-desktop/))
+
+1. Запустите контейнер: `docker compose up -d` (или `docker-compose up -d`)
+2. В `.env` добавьте: `DATABASE_URL_LOCAL="postgresql://postgres:postgres@localhost:5433/promesto_local"`
+3. Примените миграцию: `npm run db:migrate-manual-local`
+4. Проверка: `npx tsx scripts/check-both-dbs.ts`  
+   Остановка: `docker compose down`
+
+**Вариант B: ветка в Neon** (без Docker)
+
+1. В [Neon Console](https://console.neon.tech) создайте новую ветку (branch) проекта — получите отдельный URL.
+2. В `.env` добавьте: `DATABASE_URL_LOCAL="postgresql://..."` (строка подключения к этой ветке).
+3. Примените миграцию: `npm run db:migrate-manual-local`
+4. Проверка: `npx tsx scripts/check-both-dbs.ts`
 
 ## ✅ Проверка работы
 

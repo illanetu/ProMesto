@@ -11,10 +11,12 @@
     "db:push": "prisma db push",
     "db:create-table": "tsx scripts/create-table.ts",
     "db:verify": "tsx scripts/verify-db.ts",
+    "db:check": "tsx scripts/check-data.ts",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "db:migrate-manual": "tsx scripts/run-migration-manually.ts",
+    "db:migrate-manual-local": "tsx scripts/run-migration-manually.ts --local",
     "view-db": "next dev"
   },
   "dependencies": {

@@ -1,0 +1,20 @@
+# Локальная PostgreSQL для разработки.
+# Запуск: docker-compose up -d
+# Остановка: docker-compose down
+# В .env задайте: DATABASE_URL_LOCAL="postgresql://postgres:postgres@localhost:5433/promesto_local"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: promesto_postgres_local
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: promesto_local
+    ports:
+      - "5433:5432"
+    volumes:
+      - promesto_pgdata:/var/lib/postgresql/data
+
+volumes:
+  promesto_pgdata:
