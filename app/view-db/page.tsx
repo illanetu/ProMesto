@@ -142,8 +142,10 @@ export default function ViewDbPage() {
       </p>
 
       <section style={styles.section}>
-        <label style={styles.label}>База данных:</label>
+        <label htmlFor="db-env" style={styles.label}>База данных:</label>
         <select
+          id="db-env"
+          name="dbEnv"
           value={dbEnv}
           onChange={(e) => {
             setDbEnv(e.target.value as ViewDbEnv)
@@ -284,12 +286,14 @@ export default function ViewDbPage() {
             >
               {TABLE_CONFIG[selectedTable].fields.map((f) => (
                 <div key={f.key} style={styles.field}>
-                  <label style={styles.label}>
+                  <label htmlFor={`field-${f.key}`} style={styles.label}>
                     {f.label}
                     {f.required && ' *'}
                   </label>
                   {f.type === 'enum' && f.enumValues ? (
                     <select
+                      id={`field-${f.key}`}
+                      name={f.key}
                       value={String(formData[f.key] ?? '')}
                       onChange={(e) =>
                         setFormData((prev) => ({ ...prev, [f.key]: e.target.value }))
@@ -305,6 +309,8 @@ export default function ViewDbPage() {
                     </select>
                   ) : f.type === 'number' ? (
                     <input
+                      id={`field-${f.key}`}
+                      name={f.key}
                       type="number"
                       value={formData[f.key] ?? ''}
                       onChange={(e) =>
@@ -318,6 +324,8 @@ export default function ViewDbPage() {
                     />
                   ) : (
                     <input
+                      id={`field-${f.key}`}
+                      name={f.key}
                       type="text"
                       value={String(formData[f.key] ?? '')}
                       onChange={(e) =>

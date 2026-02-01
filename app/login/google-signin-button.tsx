@@ -47,8 +47,8 @@ export function GoogleSignInButton() {
 
   return (
     <form action="/api/auth/signin/google" method="POST" style={{ width: "100%" }}>
-      <input type="hidden" name="csrfToken" value={csrfToken} />
-      <input type="hidden" name="callbackUrl" value={CALLBACK_URL} />
+      <input type="hidden" id="csrf-token" name="csrfToken" value={csrfToken} />
+      <input type="hidden" id="callback-url" name="callbackUrl" value={CALLBACK_URL} />
       <button
         type="submit"
         style={{
