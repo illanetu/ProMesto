@@ -3,7 +3,7 @@
 import { getViewDbPrisma, TABLE_CONFIG, TABLE_KEYS, type TableKey, type ViewDbEnv } from '@/lib/view-db-prisma'
 
 const PAGE_SIZE = 10
-const CONNECT_TIMEOUT_MS = 15000
+const CONNECT_TIMEOUT_MS = 25000
 
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return Promise.race([

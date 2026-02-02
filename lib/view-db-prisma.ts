@@ -1,9 +1,10 @@
 import { PrismaClient } from '@/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { TABLE_CONFIG, TABLE_KEYS, type TableKey, type ViewDbEnv } from './view-db-config'
 
 export { TABLE_CONFIG, TABLE_KEYS, type TableKey, type ViewDbEnv }
 
-const clientCache = new Map<string, PrismaClient>()
+const localClientCache = new Map<string, PrismaClient>()
 
 function getDatabaseUrl(env: ViewDbEnv): string {
   if (env === 'local') {
@@ -17,13 +18,17 @@ function getDatabaseUrl(env: ViewDbEnv): string {
 }
 
 export function getViewDbPrisma(env: ViewDbEnv): PrismaClient {
-  const cached = clientCache.get(env)
+  // Production: общий клиент с ретраями и одним пулом — меньше таймаутов и обрывов
+  if (env === 'production') {
+    return prisma as PrismaClient
+  }
+  const cached = localClientCache.get(env)
   if (cached) return cached
   const url = getDatabaseUrl(env)
   const client = new PrismaClient({
     datasources: { db: { url } },
     log: ['error'],
   })
-  clientCache.set(env, client)
+  localClientCache.set(env, client)
   return client
 }
