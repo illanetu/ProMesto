@@ -3,13 +3,22 @@ import { PrismaClient } from '@/generated/prisma'
 const MAX_RETRIES = 2
 const RETRY_DELAY_MS = 300
 
+function getErrorMessage(e: unknown): string {
+  if (e instanceof Error) {
+    const parts = [e.message]
+    const cause = (e as { cause?: unknown }).cause
+    if (cause instanceof Error) parts.push(cause.message)
+    else if (cause && typeof cause === 'object' && 'message' in cause) parts.push(String((cause as { message: unknown }).message))
+    return parts.join(' ')
+  }
+  return String(e)
+}
+
 function isRetryableError(e: unknown): boolean {
   if (e && typeof e === 'object' && 'code' in e && (e as { code: string }).code === 'P1017') return true
-  if (e instanceof Error) {
-    const msg = e.message
-    if (/server has closed the connection|connection.*reset|удаленный хост/i.test(msg)) return true
-    if (/timed out fetching a new connection|connection pool/i.test(msg)) return true
-  }
+  const msg = getErrorMessage(e)
+  if (/server has closed the connection|connection.*reset|удаленный хост|connection reset|ECONNRESET/i.test(msg)) return true
+  if (/timed out fetching a new connection|connection pool/i.test(msg)) return true
   return false
 }
 

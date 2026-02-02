@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import {
   createRecord,
   deleteRecord,
@@ -136,10 +137,17 @@ export default function ViewDbPage() {
 
   return (
     <main style={styles.main}>
-      <h1 style={styles.h1}>view-db</h1>
-      <p style={styles.subtitle}>
-        Тестовая программа: выберите локальную или рабочую БД → список таблиц с кнопкой «Открыть» → таблица с пагинацией и CRUD.
-      </p>
+      <div style={styles.headerRow}>
+        <div>
+          <h1 style={styles.h1}>view-db</h1>
+          <p style={styles.subtitle}>
+            Тестовая программа: выберите локальную или рабочую БД → список таблиц с кнопкой «Открыть» → таблица с пагинацией и CRUD.
+          </p>
+        </div>
+        <Link href="/dashboard" style={styles.backButton}>
+          На dashboard
+        </Link>
+      </div>
 
       <section style={styles.section}>
         <label htmlFor="db-env" style={styles.label}>База данных:</label>
@@ -366,8 +374,27 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '1.5rem 2rem',
     boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
   },
+  headerRow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    marginBottom: '0.5rem',
+  },
   h1: { fontSize: '1.75rem', marginBottom: '0.5rem', color: '#333' },
   subtitle: { fontSize: '0.9rem', color: '#666', marginBottom: '1rem' },
+  backButton: {
+    flexShrink: 0,
+    padding: '8px 16px',
+    borderRadius: 6,
+    border: '1px solid #667eea',
+    background: 'white',
+    color: '#667eea',
+    fontSize: 14,
+    fontWeight: 600,
+    textDecoration: 'none',
+    cursor: 'pointer',
+  },
   h2: { fontSize: '1.25rem', marginBottom: '0.75rem', color: '#444', display: 'flex', alignItems: 'center', gap: 12 },
   h3: { fontSize: '1.1rem', marginBottom: '1rem', color: '#333' },
   section: { marginBottom: '1.5rem' },

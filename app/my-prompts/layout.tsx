@@ -1,6 +1,6 @@
 /**
  * Защита /my-prompts: неавторизованных редирект на /login.
- * В Next.js 16 проверка auth в layout (proxy не используется для auth).
+ * При ошибке БД/адаптера (разрыв соединения и т.п.) тоже редирект на /login, чтобы не показывать AdapterError.
  */
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
@@ -10,7 +10,15 @@ export default async function MyPromptsLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
+  let session = null
+  try {
+    session = await auth()
+  } catch (e) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[my-prompts layout] auth() failed, redirecting to /login:", e)
+    }
+    redirect("/login")
+  }
   if (!session?.user) {
     redirect("/login")
   }
