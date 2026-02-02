@@ -8,9 +8,8 @@
 // Правила: onDelete Cascade для связей; UNIQUE(userId, mestoId); индексы по DATABASE.md
 
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../generated/prisma"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
