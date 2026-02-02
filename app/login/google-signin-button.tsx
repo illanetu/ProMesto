@@ -3,24 +3,70 @@
 /**
  * Кнопка «Войти через Google»: Auth.js v5 требует POST с CSRF-токеном,
  * GET /api/auth/signin/google не поддерживается.
+ * Таймаут запроса CSRF, чтобы на Vercel при долгом ответе не зависать на «Загрузка…».
  */
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 const CALLBACK_URL = "/dashboard"
+const CSRF_TIMEOUT_MS = 15_000
 
 export function GoogleSignInButton() {
   const [csrfToken, setCsrfToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetch("/api/auth/csrf")
+  const fetchCsrf = useCallback(() => {
+    setError(null)
+    setLoading(true)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), CSRF_TIMEOUT_MS)
+
+    fetch("/api/auth/csrf", { signal: controller.signal })
       .then((res) => res.json())
       .then((data) => {
         setCsrfToken(data.csrfToken ?? data.token ?? null)
       })
-      .catch(() => setCsrfToken(null))
-      .finally(() => setLoading(false))
+      .catch((e) => {
+        if (e.name === "AbortError") {
+          setError("Превышено время ожидания. Проверьте подключение и нажмите «Повторить».")
+        } else {
+          setError("Не удалось загрузить. Нажмите «Повторить».")
+        }
+        setCsrfToken(null)
+      })
+      .finally(() => {
+        clearTimeout(timeoutId)
+        setLoading(false)
+      })
   }, [])
+
+  useEffect(() => {
+    fetchCsrf()
+  }, [fetchCsrf])
+
+  if (error) {
+    return (
+      <div style={{ width: "100%", textAlign: "center" }}>
+        <p style={{ fontSize: "0.9rem", color: "#b91c1c", marginBottom: "0.75rem" }}>{error}</p>
+        <button
+          type="button"
+          onClick={fetchCsrf}
+          style={{
+            padding: "0.875rem 1.5rem",
+            fontSize: "1rem",
+            fontWeight: 600,
+            color: "#1a1a1a",
+            background: "#fff",
+            border: "1px solid #dadce0",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
+        >
+          Повторить
+        </button>
+      </div>
+    )
+  }
 
   if (loading || !csrfToken) {
     return (
