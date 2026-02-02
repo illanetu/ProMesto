@@ -38,11 +38,12 @@ function isRetryableError(e: unknown): boolean {
 
 function createPrisma() {
   const adapter = createNeonAdapter()
+  // Сгенерированные типы PrismaClient не включают adapter; runtime его поддерживает (driver adapters).
   const base = adapter
     ? new PrismaClient({
         adapter,
         log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-      })
+      } as ConstructorParameters<typeof PrismaClient>[0])
     : new PrismaClient({
         log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
       })
