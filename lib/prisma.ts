@@ -3,20 +3,6 @@ import { PrismaClient } from '@/generated/prisma'
 const MAX_RETRIES = 2
 const RETRY_DELAY_MS = 300
 
-/** На Vercel используем Neon serverless-драйвер (HTTP/WebSocket), чтобы избежать разрыва TCP-соединения. */
-function createNeonAdapter(): InstanceType<typeof import('@prisma/adapter-neon').PrismaNeon> | undefined {
-  if (typeof process.env.VERCEL === 'undefined' || !process.env.DATABASE_URL) return undefined
-  try {
-    const { neonConfig } = require('@neondatabase/serverless')
-    const { PrismaNeon } = require('@prisma/adapter-neon')
-    const ws = require('ws')
-    neonConfig.webSocketConstructor = ws
-    return new PrismaNeon({ connectionString: process.env.DATABASE_URL })
-  } catch {
-    return undefined
-  }
-}
-
 function getErrorMessage(e: unknown): string {
   if (e instanceof Error) {
     const parts = [e.message]
@@ -37,16 +23,9 @@ function isRetryableError(e: unknown): boolean {
 }
 
 function createPrisma() {
-  const adapter = createNeonAdapter()
-  // PrismaNeon — фабрика адаптера; runtime принимает её. Типы ожидают DriverAdapter — приводим через unknown.
-  const base = adapter
-    ? new PrismaClient({
-        adapter: adapter as any,
-        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-      })
-    : new PrismaClient({
-        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-      })
+  const base = new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  })
   return base.$extends({
     name: 'retryOnConnectionError',
     query: {
