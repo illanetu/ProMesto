@@ -10,9 +10,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import type { PrismaClient } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 
-// PrismaAdapter типизирован под @prisma/client; наш клиент из generated/prisma — та же форма, приводим тип
+// PrismaAdapter типизирован под @prisma/client; наш клиент из generated/prisma с $extends — приводим через unknown
 export const { handlers, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma as PrismaClient),
+  adapter: PrismaAdapter(prisma as unknown as PrismaClient),
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
