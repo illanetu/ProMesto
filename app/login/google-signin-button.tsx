@@ -22,13 +22,20 @@ export function GoogleSignInButton() {
     const timeoutId = setTimeout(() => controller.abort(), CSRF_TIMEOUT_MS)
 
     fetch("/api/auth/csrf", { signal: controller.signal })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
+        return res.json()
+      })
       .then((data) => {
         setCsrfToken(data.csrfToken ?? data.token ?? null)
       })
       .catch((e) => {
         if (e.name === "AbortError") {
           setError("Превышено время ожидания. Проверьте подключение и нажмите «Повторить».")
+        } else if (e instanceof Error && e.message.includes("500")) {
+          setError("Временная ошибка сервера (подключение к БД). Нажмите «Повторить».")
         } else {
           setError("Не удалось загрузить. Нажмите «Повторить».")
         }
