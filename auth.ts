@@ -26,6 +26,7 @@ export const { handlers, auth } = NextAuth({
   },
   pages: {
     signIn: "/login",
+    error: "/auth-error",
   },
   callbacks: {
     // Сессия из БД уже содержит user; при необходимости можно расширить
