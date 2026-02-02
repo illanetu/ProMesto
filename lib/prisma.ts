@@ -21,16 +21,16 @@ function createPrisma() {
     name: 'retryOnConnectionError',
     query: {
       $allOperations({ operation, model, args, query }) {
-        const run = (attempt: number): ReturnType<typeof query> =>
+        const run = (attempt: number): Promise<unknown> =>
           query(args).catch((e: unknown) => {
             if (isRetryableError(e) && attempt < MAX_RETRIES) {
               return new Promise<unknown>((resolve, reject) => {
                 setTimeout(() => run(attempt + 1).then(resolve).catch(reject), RETRY_DELAY_MS)
-              }) as ReturnType<typeof query>
+              })
             }
             throw e
           })
-        return run(0)
+        return run(0) as ReturnType<typeof query>
       },
     },
   })
