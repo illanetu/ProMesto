@@ -105,13 +105,14 @@ model Category {
 }
 
 // Mesto: id, ownerId -> User, title, content, description?, categoryId -> Category,
-// visibility (PRIVATE|PUBLIC, default PRIVATE), createdAt, updatedAt, publishedAt?
+// visibility (PRIVATE|PUBLIC = isPublic), isFavorite, createdAt, updatedAt
 model Mesto {
   id          String     @id @default(cuid())
   title       String
   content     String
   description String?
   visibility  Visibility @default(PRIVATE)
+  isFavorite  Boolean    @default(false) @map("is_favorite")
   publishedAt DateTime?  @map("published_at")
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
@@ -125,6 +126,7 @@ model Mesto {
 
   @@index([ownerId, updatedAt])
   @@index([visibility, createdAt])
+  @@index([ownerId, isFavorite])
   @@map("mestos")
 }
 

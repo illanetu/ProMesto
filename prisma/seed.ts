@@ -57,6 +57,7 @@ async function run() {
       title: 'Тестовое место 1',
       content: 'Описание первого места.',
       visibility: 'PUBLIC',
+      isFavorite: false,
       ownerId: user.id,
       categoryId: category.id,
     },
@@ -66,6 +67,7 @@ async function run() {
       title: 'Тестовое место 2',
       content: 'Второе место.',
       visibility: 'PRIVATE',
+      isFavorite: true,
       ownerId: user.id,
     },
   })
