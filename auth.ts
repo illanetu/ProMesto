@@ -36,14 +36,12 @@ export const { handlers, auth } = NextAuth({
       }
       return session
     },
-    // Middleware: неавторизованных редиректить на pages.signIn (/login)
+    // Защита маршрутов: /dashboard, /my-prompts (главная / — в page.tsx)
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
-      const path = nextUrl.pathname
       const isProtected =
-        path === "/" ||
-        path.startsWith("/dashboard") ||
-        path.startsWith("/my-prompts")
+        nextUrl.pathname.startsWith("/dashboard") ||
+        nextUrl.pathname.startsWith("/my-prompts")
       if (isProtected && !isLoggedIn) return false
       return true
     },
