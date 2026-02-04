@@ -82,10 +82,14 @@ export function MestoCard({ mesto, isOwner, showDelete = true, showLike, variant
             <div className="flex items-center gap-1.5">
               <h3 className="font-semibold text-slate-900">{mesto.title}</h3>
               {isCompact && mesto.visibility === "PUBLIC" && (
-                <Globe className="h-3.5 w-3.5 shrink-0 text-emerald-600" title="Публичное" />
+                <span title="Публичное">
+                  <Globe className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                </span>
               )}
               {isCompact && mesto.isFavorite && (
-                <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-500" title="В избранном" />
+                <span title="В избранном">
+                  <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-500" />
+                </span>
               )}
             </div>
             <p className={cn("text-sm text-slate-500", isCompact ? "line-clamp-2" : "mt-1 line-clamp-2")}>
