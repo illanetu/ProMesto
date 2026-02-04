@@ -4,17 +4,19 @@ import { MestoCard } from "@/components/dashboard/MestoCard"
 import { MestoListHeader } from "@/components/dashboard/MestoListHeader"
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string }>
+  searchParams: Promise<{ q?: string; page?: string; sort?: string }>
 }
 
 export default async function PublicMestosPage({ searchParams }: PageProps) {
   const params = await searchParams
   const q = params.q ?? ""
   const page = parseInt(params.page ?? "1", 10) || 1
+  const sort = params.sort === "popular" ? "popular" : "recent"
 
   const { mestos, total, pageSize, userId } = await getPublicMestos({
     search: q || undefined,
     page,
+    sort,
   })
   const totalPages = Math.ceil(total / pageSize)
 
@@ -32,6 +34,8 @@ export default async function PublicMestosPage({ searchParams }: PageProps) {
           totalPages={totalPages}
           currentPage={page}
           basePath="/dashboard/public"
+          showSort
+          currentSort={sort}
         />
       </Suspense>
 
@@ -47,6 +51,7 @@ export default async function PublicMestosPage({ searchParams }: PageProps) {
               mesto={m}
               isOwner={userId === m.ownerId}
               showDelete={userId === m.ownerId}
+              showLike
             />
           ))}
         </div>

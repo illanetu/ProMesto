@@ -11,13 +11,15 @@ import {
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { MestoDialog } from "./MestoDialog"
+import { LikeButton } from "./LikeButton"
 import { useState } from "react"
 import type { Mesto } from "@/generated/prisma"
 
 interface MestoCardProps {
-  mesto: Mesto
+  mesto: Mesto & { likesCount?: number; likedByMe?: boolean }
   isOwner: boolean
   showDelete?: boolean
+  showLike?: boolean
 }
 
 function previewText(text: string, maxLen = 120): string {
@@ -26,7 +28,7 @@ function previewText(text: string, maxLen = 120): string {
   return trimmed.slice(0, maxLen) + "…"
 }
 
-export function MestoCard({ mesto, isOwner, showDelete = true }: MestoCardProps) {
+export function MestoCard({ mesto, isOwner, showDelete = true, showLike }: MestoCardProps) {
   const [pending, startTransition] = useTransition()
   const [editOpen, setEditOpen] = useState(false)
   const router = useRouter()
@@ -79,7 +81,14 @@ export function MestoCard({ mesto, isOwner, showDelete = true }: MestoCardProps)
         </div>
 
         {/* Действия */}
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 flex-wrap items-center gap-1">
+          {showLike && mesto.visibility === "PUBLIC" && (
+            <LikeButton
+              mestoId={mesto.id}
+              initialLiked={mesto.likedByMe ?? false}
+              initialCount={mesto.likesCount ?? 0}
+            />
+          )}
           {isOwner && (
             <Button
               variant="ghost"

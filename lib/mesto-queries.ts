@@ -61,14 +61,20 @@ export async function getMyMestos(opts?: {
   }
 }
 
+export type PublicMestoWithLikes = Awaited<
+  ReturnType<typeof getPublicMestos>
+>["mestos"][number]
+
 export async function getPublicMestos(opts?: {
   search?: string
   page?: number
+  sort?: "popular" | "recent"
 }) {
   const session = await getSession()
   const search = opts?.search?.trim() ?? ""
   const page = Math.max(1, opts?.page ?? 1)
   const skip = (page - 1) * PAGE_SIZE
+  const sort = opts?.sort ?? "recent"
 
   const where = {
     visibility: "PUBLIC" as const,
@@ -82,18 +88,44 @@ export async function getPublicMestos(opts?: {
       : {}),
   }
 
+  const orderBy =
+    sort === "popular"
+      ? { likes: { _count: "desc" as const } }
+      : { createdAt: "desc" as const }
+
   try {
     const [mestos, total] = await Promise.all([
       prisma.mesto.findMany({
         where,
-        orderBy: { updatedAt: "desc" },
+        orderBy,
         skip,
         take: PAGE_SIZE,
+        include: {
+          _count: { select: { likes: true } },
+          likes:
+            session?.user?.id != null
+              ? {
+                  where: { userId: session.user.id },
+                  select: { id: true },
+                }
+              : false,
+        },
       }),
       prisma.mesto.count({ where }),
     ])
+
+    const mestosWithMeta = mestos.map((m) => {
+      const { _count, ...rest } = m
+      const likes = "likes" in m ? (m as { likes?: { id: string }[] }).likes : undefined
+      return {
+        ...rest,
+        likesCount: _count.likes,
+        likedByMe: Array.isArray(likes) && likes.length > 0,
+      }
+    })
+
     return {
-      mestos,
+      mestos: mestosWithMeta,
       total,
       page,
       pageSize: PAGE_SIZE,

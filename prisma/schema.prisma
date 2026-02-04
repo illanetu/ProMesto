@@ -37,6 +37,7 @@ model User {
   notes    Note[]
   mestos   Mesto[]
   votes    Vote[]
+  likes    Like[]
 
   @@map("users")
 }
@@ -123,6 +124,7 @@ model Mesto {
   category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags     Tag[]
   votes    Vote[]
+  likes    Like[]
 
   @@index([ownerId, updatedAt])
   @@index([visibility, createdAt])
@@ -156,4 +158,19 @@ model Vote {
   @@index([mestoId])
   @@index([userId])
   @@map("votes")
+}
+
+// Like: лайк публичного Mesto. 1 пользователь = 1 лайк на место (toggle)
+model Like {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  mestoId   String   @map("mesto_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mesto Mesto @relation(fields: [mestoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mestoId])
+  @@index([mestoId])
+  @@map("likes")
 }
