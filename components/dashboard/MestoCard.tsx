@@ -20,6 +20,7 @@ interface MestoCardProps {
   isOwner: boolean
   showDelete?: boolean
   showLike?: boolean
+  variant?: "default" | "compact"
 }
 
 function previewText(text: string, maxLen = 120): string {
@@ -28,7 +29,7 @@ function previewText(text: string, maxLen = 120): string {
   return trimmed.slice(0, maxLen) + "…"
 }
 
-export function MestoCard({ mesto, isOwner, showDelete = true, showLike }: MestoCardProps) {
+export function MestoCard({ mesto, isOwner, showDelete = true, showLike, variant = "default" }: MestoCardProps) {
   const [pending, startTransition] = useTransition()
   const [editOpen, setEditOpen] = useState(false)
   const router = useRouter()
@@ -61,27 +62,48 @@ export function MestoCard({ mesto, isOwner, showDelete = true, showLike }: Mesto
     })
   }
 
+  const isCompact = variant === "compact"
+
   return (
     <>
       <div
         className={cn(
-          "flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm",
-          "transition-shadow hover:shadow-md"
+          "rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md",
+          isCompact ? "flex flex-col p-4" : "flex items-start gap-3 p-4"
         )}
       >
-        {/* Иконка чата */}
-        <div className="mt-0.5 shrink-0 rounded-full bg-slate-100 p-2">
-          <MessageSquare className="h-4 w-4 text-slate-600" />
-        </div>
-
-        {/* Контент */}
-        <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-slate-900">{mesto.title}</h3>
-          <p className="mt-1 line-clamp-2 text-sm text-slate-500">{preview}</p>
+        <div className={cn(isCompact ? "flex flex-col gap-3" : "flex items-start gap-3")}>
+          {!isCompact && (
+            <div className="mt-0.5 shrink-0 rounded-full bg-slate-100 p-2">
+              <MessageSquare className="h-4 w-4 text-slate-600" />
+            </div>
+          )}
+          <div className={cn("min-w-0 flex-1", isCompact && "space-y-1")}>
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-semibold text-slate-900">{mesto.title}</h3>
+              {isCompact && mesto.visibility === "PUBLIC" && (
+                <Globe className="h-3.5 w-3.5 shrink-0 text-emerald-600" title="Публичное" />
+              )}
+              {isCompact && mesto.isFavorite && (
+                <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-500" title="В избранном" />
+              )}
+            </div>
+            <p className={cn("text-sm text-slate-500", isCompact ? "line-clamp-2" : "mt-1 line-clamp-2")}>
+              {preview}
+            </p>
+            {isCompact && (
+              <p className="text-xs text-slate-400">
+                {new Date(mesto.updatedAt).toLocaleDateString("ru-RU")}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Действия */}
-        <div className="flex shrink-0 flex-wrap items-center gap-1">
+        <div className={cn(
+          "flex shrink-0 items-center gap-1",
+          isCompact && "mt-3 flex-wrap border-t border-slate-100 pt-3"
+        )}>
           {showLike && mesto.visibility === "PUBLIC" && (
             <LikeButton
               mestoId={mesto.id}
@@ -125,25 +147,32 @@ export function MestoCard({ mesto, isOwner, showDelete = true, showLike }: Mesto
           {isOwner && (
             <Button
               variant="ghost"
-              size="icon"
+              size={isCompact ? "sm" : "icon"}
               onClick={() => setEditOpen(true)}
               disabled={pending}
-              className="h-8 w-8"
+              className={cn(
+                isCompact && "h-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+              )}
               title="Редактировать"
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className={cn("h-4 w-4", isCompact && "h-3.5 w-3.5")} />
+              {isCompact && <span className="ml-1">Правка</span>}
             </Button>
           )}
           {isOwner && showDelete && (
             <Button
               variant="ghost"
-              size="icon"
+              size={isCompact ? "sm" : "icon"}
               onClick={handleDelete}
               disabled={pending}
-              className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+              className={cn(
+                "text-red-600 hover:bg-red-50 hover:text-red-700",
+                !isCompact && "h-8 w-8"
+              )}
               title="Удалить"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className={cn("h-4 w-4", isCompact && "h-3.5 w-3.5")} />
+              {isCompact && <span className="ml-1">Удалить</span>}
             </Button>
           )}
         </div>

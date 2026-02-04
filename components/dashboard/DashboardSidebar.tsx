@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils"
 const menuItems = [
   { href: "/dashboard/profile", label: "Профиль", icon: User },
   { href: "/dashboard", label: "Мои места", icon: MessageSquare },
-  { href: "/dashboard/public", label: "Публичные промты", icon: Globe },
+  { href: "/dashboard/public", label: "Публичные места", icon: Globe },
   { href: "/dashboard/favorites", label: "Избранное", icon: Star },
   { href: "/dashboard/notes", label: "Заметки", icon: FileText },
   { href: "/dashboard/history", label: "История", icon: History },
