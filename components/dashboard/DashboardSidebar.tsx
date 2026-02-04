@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils"
 
 const menuItems = [
   { href: "/dashboard/profile", label: "Профиль", icon: User },
-  { href: "/dashboard", label: "Мои промты", icon: MessageSquare },
+  { href: "/dashboard", label: "Мои места", icon: MessageSquare },
   { href: "/dashboard/public", label: "Публичные промты", icon: Globe },
   { href: "/dashboard/favorites", label: "Избранное", icon: Star },
   { href: "/dashboard/notes", label: "Заметки", icon: FileText },
@@ -43,8 +43,33 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         "border-r border-slate-200"
       )}
     >
-      {/* Меню */}
-      <nav className="flex flex-1 flex-col gap-0.5 px-3 py-4">
+      {/* Аватар и имя — сверху */}
+      <div className="flex flex-col items-center gap-2 border-b border-slate-200 px-4 py-6">
+        {user.image ? (
+          <Image
+            src={user.image}
+            alt={user.name ?? "Аватар"}
+            width={64}
+            height={64}
+            className="rounded-full"
+          />
+        ) : (
+          <div
+            className={cn(
+              "flex h-16 w-16 shrink-0 items-center justify-center rounded-full",
+              "bg-slate-200 text-slate-600 text-xl font-semibold"
+            )}
+          >
+            {user.name?.[0] ?? user.email?.[0] ?? "?"}
+          </div>
+        )}
+        <span className="text-center text-sm font-medium text-slate-700">
+          {user.name ?? "Пользователь"}
+        </span>
+      </div>
+
+      {/* Меню — под аватаром */}
+      <nav className="flex flex-1 flex-col gap-0.5 overflow-auto px-3 py-4">
         {menuItems.map((item) => {
           const isActive =
             item.href === "/dashboard"
@@ -71,31 +96,8 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         })}
       </nav>
 
-      {/* Профиль и выход */}
+      {/* Выход — внизу */}
       <div className="border-t border-slate-200 px-3 py-4">
-        <div className="mb-3 flex items-center gap-3">
-          {user.image ? (
-            <Image
-              src={user.image}
-              alt={user.name ?? "Аватар"}
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          ) : (
-            <div
-              className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
-                "bg-slate-200 text-slate-600 text-sm font-medium"
-              )}
-            >
-              {user.name?.[0] ?? user.email?.[0] ?? "?"}
-            </div>
-          )}
-          <span className="truncate text-sm font-medium text-slate-700">
-            {user.name ?? "Пользователь"}
-          </span>
-        </div>
         <Link
           href="/api/auth/signout"
           className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800"

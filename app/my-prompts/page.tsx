@@ -1,5 +1,5 @@
 /**
- * Мои промты: данные пользователя (Mesto, Note), привязанные к userId.
+ * Мои места: данные пользователя (Mesto, Note), привязанные к userId.
  * Приватные записи видит только владелец (фильтрация по session.user.id).
  */
 import { auth } from "@/auth"
@@ -49,7 +49,7 @@ export default async function MyPromptsPage() {
           color: "#1a1a1a",
         }}
       >
-        Мои промты
+        Мои места
       </h1>
       <p style={{ color: "#666", marginBottom: "1.5rem", fontSize: "0.95rem" }}>
         Заметки и места, привязанные к вашему аккаунту. Приватные данные видны только вам.
