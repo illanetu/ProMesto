@@ -39,9 +39,11 @@ export const { handlers, auth } = NextAuth({
     // Middleware: неавторизованных редиректить на pages.signIn (/login)
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
+      const path = nextUrl.pathname
       const isProtected =
-        nextUrl.pathname.startsWith("/dashboard") ||
-        nextUrl.pathname.startsWith("/my-prompts")
+        path === "/" ||
+        path.startsWith("/dashboard") ||
+        path.startsWith("/my-prompts")
       if (isProtected && !isLoggedIn) return false
       return true
     },
