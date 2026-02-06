@@ -26,6 +26,14 @@ body {
   min-height: 100vh;
 }
 
+/* Элементы форм по умолчанию не наследуют шрифт — задаём явно */
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+}
+
 a {
   color: inherit;
   text-decoration: none;
