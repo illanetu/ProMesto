@@ -5,6 +5,7 @@
 
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import type { Mesto } from "@/generated/prisma"
 
 const PAGE_SIZE = 10
 
@@ -88,8 +89,13 @@ export async function getPublicMestos(opts?: {
       : {}),
   }
 
+  type MestoWithLikesMeta = Mesto & {
+    _count: { likes: number }
+    likes?: { id: string }[]
+  }
+
   try {
-    let mestos
+    let mestos: MestoWithLikesMeta[]
     const total = await prisma.mesto.count({ where })
 
     if (sort === "popular") {
