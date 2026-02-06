@@ -44,7 +44,7 @@ export function DashboardSidebar({
   const content = (
     <>
       {/* Аватар и имя — сверху */}
-      <div className="flex flex-col items-center gap-2 border-b border-slate-200 pl-6 pr-4 py-6">
+      <div className="flex flex-col items-center gap-2 border-b border-slate-200 pl-8 pr-5 py-6">
         {user.image ? (
           <Image
             src={user.image}
@@ -69,7 +69,7 @@ export function DashboardSidebar({
       </div>
 
       {/* Меню — под аватаром */}
-      <nav className="flex flex-1 flex-col gap-0.5 overflow-auto pl-5 pr-3 py-4">
+      <nav className="flex flex-1 flex-col gap-0.5 overflow-auto pl-8 pr-4 py-4">
         {menuItems.map((item) => {
           const isActive =
             item.href === "/dashboard"
@@ -98,7 +98,7 @@ export function DashboardSidebar({
       </nav>
 
       {/* Выход — внизу */}
-      <div className="border-t border-slate-200 pl-5 pr-3 py-4">
+      <div className="border-t border-slate-200 pl-8 pr-4 py-4">
         <Link
           href="/api/auth/signout"
           onClick={onClose}

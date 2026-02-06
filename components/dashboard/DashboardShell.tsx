@@ -39,7 +39,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
 
       <main className="flex min-w-0 flex-1 flex-col overflow-x-hidden bg-white">
         {/* Верхняя полоса на мобильном: кнопка меню */}
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white pl-6 pr-4 md:hidden">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white pl-8 pr-6 md:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -51,7 +51,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
           <span className="text-sm font-semibold text-slate-800">ProMesto</span>
         </header>
 
-        <div className="flex-1 overflow-x-hidden overflow-y-auto px-6 py-4 sm:px-8 sm:py-6">
+        <div className="flex-1 overflow-x-hidden overflow-y-auto px-8 py-5 sm:px-12 sm:py-8">
           {children}
         </div>
       </main>
