@@ -68,19 +68,19 @@ export function MestoCard({ mesto, isOwner, showDelete = true, showLike, variant
     <>
       <div
         className={cn(
-          "rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md",
+          "min-w-0 rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md",
           isCompact ? "flex flex-col p-4" : "flex items-start gap-3 p-4"
         )}
       >
-        <div className={cn(isCompact ? "flex flex-col gap-3" : "flex items-start gap-3")}>
+        <div className={cn("min-w-0 flex-1", isCompact ? "flex flex-col gap-3" : "flex items-start gap-3")}>
           {!isCompact && (
             <div className="mt-0.5 shrink-0 rounded-full bg-slate-100 p-2">
               <MessageSquare className="h-4 w-4 text-slate-600" />
             </div>
           )}
           <div className={cn("min-w-0 flex-1", isCompact && "space-y-1")}>
-            <div className="flex items-center gap-1.5">
-              <h3 className="font-semibold text-slate-900">{mesto.title}</h3>
+            <div className="flex min-w-0 items-center gap-1.5">
+              <h3 className="min-w-0 truncate font-semibold text-slate-900" title={mesto.title}>{mesto.title}</h3>
               {isCompact && mesto.visibility === "PUBLIC" && (
                 <span title="Публичное">
                   <Globe className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
@@ -105,8 +105,8 @@ export function MestoCard({ mesto, isOwner, showDelete = true, showLike, variant
 
         {/* Действия */}
         <div className={cn(
-          "flex shrink-0 items-center gap-1",
-          isCompact && "mt-3 flex-wrap border-t border-slate-100 pt-3"
+          "flex shrink-0 flex-wrap items-center gap-1",
+          isCompact && "mt-3 border-t border-slate-100 pt-3"
         )}>
           {showLike && mesto.visibility === "PUBLIC" && (
             <LikeButton

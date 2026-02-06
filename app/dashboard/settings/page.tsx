@@ -1,6 +1,6 @@
 export default function SettingsPage() {
   return (
-    <div className="flex flex-1 flex-col p-6">
+    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden p-4 sm:p-6">
       <h1 className="text-2xl font-bold text-slate-900">Личный кабинет</h1>
       <h2 className="mt-2 text-lg font-medium text-slate-600">Настройки</h2>
       <div className="mt-8 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center">

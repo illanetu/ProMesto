@@ -48,7 +48,7 @@ export function MestoPublicPlacesView({
 
       {/* Поиск, сортировка, переключатель вида, пагинация */}
       <div className="mt-6 flex flex-wrap items-center gap-4">
-        <div className="min-w-[200px] max-w-sm flex-1">
+        <div className="min-w-0 max-w-sm flex-1 basis-full sm:basis-auto">
           <SearchInput placeholder="Поиск по названию или описанию…" />
         </div>
         <div className="flex items-center gap-2 text-sm">

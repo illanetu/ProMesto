@@ -30,19 +30,19 @@ interface DashboardSidebarProps {
     email?: string | null
     image?: string | null
   }
+  open?: boolean
+  onClose?: () => void
 }
 
-export function DashboardSidebar({ user }: DashboardSidebarProps) {
+export function DashboardSidebar({
+  user,
+  open = false,
+  onClose,
+}: DashboardSidebarProps) {
   const pathname = usePathname()
 
-  return (
-    <aside
-      className={cn(
-        "flex h-full w-[280px] shrink-0 flex-col",
-        "bg-white",
-        "border-r border-slate-200"
-      )}
-    >
+  const content = (
+    <>
       {/* Аватар и имя — сверху */}
       <div className="flex flex-col items-center gap-2 border-b border-slate-200 px-4 py-6">
         {user.image ? (
@@ -80,6 +80,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
@@ -100,11 +101,24 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       <div className="border-t border-slate-200 px-3 py-4">
         <Link
           href="/api/auth/signout"
+          onClick={onClose}
           className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800"
         >
           Выйти
         </Link>
       </div>
+    </>
+  )
+
+  return (
+    <aside
+      className={cn(
+        "flex h-full w-[280px] shrink-0 flex-col bg-white border-r border-slate-200",
+        "fixed inset-y-0 left-0 z-50 transform transition-transform duration-200 ease-out md:relative md:translate-x-0 md:z-auto",
+        open ? "translate-x-0" : "-translate-x-full"
+      )}
+    >
+      {content}
     </aside>
   )
 }

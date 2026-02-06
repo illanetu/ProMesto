@@ -1,12 +1,11 @@
 /**
  * Layout личного кабинета: двухколоночная компоновка.
- * Слева — сайдбар, справа — контент.
+ * Слева — сайдбар, справа — контент. На мобильном сайдбар — выдвижное меню.
  * Защита: неавторизованных редирект на /login.
  */
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar"
-import Link from "next/link"
+import { DashboardShell } from "@/components/dashboard/DashboardShell"
 
 export default async function DashboardLayout({
   children,
@@ -26,12 +25,5 @@ export default async function DashboardLayout({
     redirect("/login")
   }
 
-  return (
-    <div className="flex min-h-screen bg-slate-100">
-      <DashboardSidebar user={session.user} />
-      <main className="flex flex-1 flex-col overflow-auto bg-white">
-        {children}
-      </main>
-    </div>
-  )
+  return <DashboardShell user={session.user}>{children}</DashboardShell>
 }
