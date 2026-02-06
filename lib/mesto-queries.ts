@@ -88,16 +88,67 @@ export async function getPublicMestos(opts?: {
       : {}),
   }
 
-  const orderBy =
-    sort === "popular"
-      ? { likes: { _count: "desc" as const } }
-      : { createdAt: "desc" as const }
-
   try {
-    const [mestos, total] = await Promise.all([
-      prisma.mesto.findMany({
+    let mestos
+    const total = await prisma.mesto.count({ where })
+
+    if (sort === "popular") {
+      // Для сортировки по популярности используем raw SQL с JOIN
+      let rawMestos: Array<{ id: string }>
+      
+      if (search) {
+        rawMestos = await prisma.$queryRaw<Array<{ id: string }>>`
+          SELECT m.id
+          FROM mestos m
+          LEFT JOIN likes l ON m.id = l.mesto_id
+          WHERE m.visibility = 'PUBLIC' 
+            AND (m.title ILIKE ${`%${search}%`} OR m.content ILIKE ${`%${search}%`})
+          GROUP BY m.id
+          ORDER BY COUNT(l.id) DESC, m.created_at DESC
+          LIMIT ${PAGE_SIZE} OFFSET ${skip}
+        `
+      } else {
+        rawMestos = await prisma.$queryRaw<Array<{ id: string }>>`
+          SELECT m.id
+          FROM mestos m
+          LEFT JOIN likes l ON m.id = l.mesto_id
+          WHERE m.visibility = 'PUBLIC'
+          GROUP BY m.id
+          ORDER BY COUNT(l.id) DESC, m.created_at DESC
+          LIMIT ${PAGE_SIZE} OFFSET ${skip}
+        `
+      }
+
+      const mestoIds = rawMestos.map((m) => m.id)
+      
+      if (mestoIds.length === 0) {
+        mestos = []
+      } else {
+        mestos = await prisma.mesto.findMany({
+          where: {
+            ...where,
+            id: { in: mestoIds },
+          },
+          include: {
+            _count: { select: { likes: true } },
+            likes:
+              session?.user?.id != null
+                ? {
+                    where: { userId: session.user.id },
+                    select: { id: true },
+                  }
+                : false,
+          },
+        })
+
+        // Сохраняем порядок из raw запроса
+        const orderMap = new Map(mestoIds.map((id, idx) => [id, idx]))
+        mestos.sort((a, b) => (orderMap.get(a.id) ?? 0) - (orderMap.get(b.id) ?? 0))
+      }
+    } else {
+      mestos = await prisma.mesto.findMany({
         where,
-        orderBy,
+        orderBy: { createdAt: "desc" as const },
         skip,
         take: PAGE_SIZE,
         include: {
@@ -110,9 +161,8 @@ export async function getPublicMestos(opts?: {
                 }
               : false,
         },
-      }),
-      prisma.mesto.count({ where }),
-    ])
+      })
+    }
 
     const mestosWithMeta = mestos.map((m) => {
       const { _count, ...rest } = m
