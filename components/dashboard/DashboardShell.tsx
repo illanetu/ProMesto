@@ -18,7 +18,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="flex min-h-screen gap-0 bg-slate-100 md:gap-6">
       {/* Backdrop на мобильном — закрывает меню по тапу */}
       <button
         type="button"
@@ -37,9 +37,9 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
         onClose={() => setSidebarOpen(false)}
       />
 
-      <main className="flex min-w-0 flex-1 flex-col overflow-x-hidden bg-white">
+      <main className="flex min-w-0 flex-1 flex-col overflow-x-hidden bg-white md:ml-0">
         {/* Верхняя полоса на мобильном: кнопка меню */}
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white pl-8 pr-6 md:hidden">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-6 md:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -51,7 +51,15 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
           <span className="text-sm font-semibold text-slate-800">ProMesto</span>
         </header>
 
-        <div className="flex-1 overflow-x-hidden overflow-y-auto px-8 py-5 sm:px-12 sm:py-8">
+        <div 
+          className="flex-1 overflow-x-hidden overflow-y-auto"
+          style={{
+            paddingLeft: 'clamp(1.5rem, 4vw, 3rem)',
+            paddingRight: 'clamp(1.5rem, 4vw, 3rem)',
+            paddingTop: 'clamp(1rem, 2vw, 2rem)',
+            paddingBottom: 'clamp(1rem, 2vw, 2rem)'
+          }}
+        >
           {children}
         </div>
       </main>
