@@ -20,7 +20,7 @@ export default async function NotesPage() {
   }
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden p-4 sm:p-6">
+    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden px-6 py-4 sm:p-6">
       <h1 className="text-2xl font-bold text-slate-900">Личный кабинет</h1>
       <h2 className="mt-2 text-lg font-medium text-slate-600">Заметки</h2>
 

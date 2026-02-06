@@ -19,7 +19,7 @@ export default async function PublicMestosPage({ searchParams }: PageProps) {
   })
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden p-4 sm:p-6">
+    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden px-6 py-4 sm:p-6">
       <Suspense fallback={<div className="animate-pulse space-y-4" />}>
         <MestoPublicPlacesView
           mestos={mestos}

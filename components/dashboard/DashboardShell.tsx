@@ -39,7 +39,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
 
       <main className="flex min-w-0 flex-1 flex-col overflow-x-hidden bg-white">
         {/* Верхняя полоса на мобильном: кнопка меню */}
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 md:hidden">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200 bg-white pl-6 pr-4 md:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
