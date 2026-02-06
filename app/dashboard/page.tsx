@@ -17,7 +17,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   })
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden px-6 py-4 sm:p-6">
+    <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
       <Suspense fallback={<div className="animate-pulse space-y-4" />}>
         <MestoMyPlacesView
           mestos={mestos}
